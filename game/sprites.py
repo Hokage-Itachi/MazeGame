@@ -1,47 +1,36 @@
-import pygame
-import sys
+import pygame as pg
 from config.settings import *
-from models.graph import *
-from models.maze import * 
 
-
-class Player(pygame.sprite.Sprite):
-    def __init__(self,game, x, y) -> None:
-        super().__init__()
+class Player(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites
+        pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pygame.image.load('./image/char.png')
+        self.image = game.player_img
+        # self.image.blit(YELLOW)
         self.rect = self.image.get_rect()
+        self.vx, self.vy = 0, 0
         self.x = x * BLOCK_SIZE
         self.y = y * BLOCK_SIZE
-        self.vx, self.vy = 0, 0
 
     def get_keys(self):
         self.vx, self.vy = 0, 0
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]:
+        keys = pg.key.get_pressed()
+        if keys[pg.K_LEFT] or keys[pg.K_a]:
             self.vx = -CHARACTERS_SPEED
-        if keys[pygame.K_RIGHT]:
+        if keys[pg.K_RIGHT] or keys[pg.K_d]:
             self.vx = CHARACTERS_SPEED
-        if keys[pygame.K_UP]:
+        if keys[pg.K_UP] or keys[pg.K_w]:
             self.vy = -CHARACTERS_SPEED
-        if keys[pygame.K_DOWN]:
+        if keys[pg.K_DOWN] or keys[pg.K_s]:
             self.vy = CHARACTERS_SPEED
-        # if self.vx != 0 and self.vy != 0:
-        #     self.vx *= 0.7071
-        #     self.vy *= 0.7071
-
-    def update(self):
-        self.get_keys()
-        self.x += self.vx
-        self.y += self.vy
-        self.rect.x = self.x
-        self.collide_with_walls('x')
-        self.rect.y = self.y
-        self.collide_with_walls('y')
+        if self.vx != 0 and self.vy != 0:
+            self.vx *= 0.7071
+            self.vy *= 0.7071
 
     def collide_with_walls(self, dir):
         if dir == 'x':
-            hits = pygame.sprite.spritecollide(self, self.game.walls, False)
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
             if hits:
                 if self.vx > 0:
                     self.x = hits[0].rect.left - self.rect.width
@@ -50,7 +39,7 @@ class Player(pygame.sprite.Sprite):
                 self.vx = 0
                 self.rect.x = self.x
         if dir == 'y':
-            hits = pygame.sprite.spritecollide(self, self.game.walls, False)
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
             if hits:
                 if self.vy > 0:
                     self.y = hits[0].rect.top - self.rect.height
@@ -58,25 +47,36 @@ class Player(pygame.sprite.Sprite):
                     self.y = hits[0].rect.bottom
                 self.vy = 0
                 self.rect.y = self.y
-        print("Log:",self.rect.x, self.rect.y)
-        
-    
-class Wall(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        # self.groups = game.all_sprites, game.walls
-        super().__init__()
-        self.image = pygame.image.load('./image/wall.png')
+
+    def update(self):
+        self.get_keys()
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        self.rect.x = self.x
+        self.collide_with_walls('x')
+        self.rect.y = self.y
+        self.collide_with_walls('y')
+
+class Wall(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.walls
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.image.load("./image/wall_1.jpg")
+        # self.image.fill(GREEN)
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
         self.rect.x = x * BLOCK_SIZE
         self.rect.y = y * BLOCK_SIZE
         
-class Grass(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        # self.groups = game.all_sprites, game.grass
-        super().__init__()
-        self.image = pygame.image.load('./image/grass.png')
+class Grass(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.grasses
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.image.load("./image/grass.jpg")
+        # self.image.fill(GREEN)
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y

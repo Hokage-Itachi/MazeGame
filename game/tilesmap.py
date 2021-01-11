@@ -1,8 +1,5 @@
-import pygame
-import sys
+import pygame as pg
 from config.settings import *
-from models.graph import *
-from models.maze import *
 
 class Map:
     def __init__(self, filename):
@@ -15,16 +12,10 @@ class Map:
         self.tileheight = len(self.data)
         self.width = self.tilewidth * BLOCK_SIZE
         self.height = self.tileheight * BLOCK_SIZE
-    def map_matrix(self):
-        for row in range(len(self.data)):
-            for col in range(len(self.data)):
-                print(self.data[row][col], end="")
-            print()
-
 
 class Camera:
     def __init__(self, width, height):
-        self.camera = pygame.Rect(0, 0, width, height)
+        self.camera = pg.Rect(0, 0, width, height)
         self.width = width
         self.height = height
 
@@ -40,4 +31,4 @@ class Camera:
         y = min(0, y)  # top
         x = max(-(self.width - SURFACE_WIDTH), x)  # right
         y = max(-(self.height - SURFACE_HEIGHT), y)  # bottom
-        self.camera = pygame.Rect(x, y, self.width, self.height)
+        self.camera = pg.Rect(x, y, self.width, self.height)

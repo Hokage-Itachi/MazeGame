@@ -1,60 +1,83 @@
-import pygame
+import pygame as pg
 import sys
+from os import path
 from config.settings import *
-from models.graph import *
-from models.maze import *
-from game.tilesmap import *
 from game.sprites import *
+from game.tilesmap import *
 
 class Game:
-    def __init__(self) -> None:
-        pygame.init()
-        self.screen = pygame.display.set_mode((SURFACE_WIDTH, SURFACE_HEIGHT))
-        pygame.display.set_caption(TITLE)
-        self.clock = pygame.time.Clock()
-        self.maze = Maze(MAZE_SIZE)
-        self.maze.create()
-        self.maze.print_to_file()
+    def __init__(self):
+        pg.init()
+        self.screen = pg.display.set_mode((SURFACE_WIDTH, SURFACE_HEIGHT))
+        pg.display.set_caption(TITLE)
+        self.clock = pg.time.Clock()
+        self.load_data()
+
+    def load_data(self):
+        game_folder = path.dirname(__file__)
         self.map = Map('map.txt')
-        
+        self.player_img = pg.image.load("./image/char_1.png").convert_alpha()
 
     def new(self):
-
-        self.all_sprites = pygame.sprite.Group()
-        self.walls = pygame.sprite.Group()
-        # self.grass = pygame.sprite.Group()
-        for row in range(len(self.map.data)):
-            for col in range(len(self.map.data)):
-                if self.map.data[row][col] == '0':
-                    self.all_sprites.add(Wall(col, row))
-                    self.walls.add(Wall(col, row))
-                if self.map.data[row][col] == '4':
-                    # self.grass.add(Grass(col, row))
-                    self.all_sprites.add(Grass(col, row))
-                if(self.map.data[row][col] == '1'):
-                    # self.grass.add(Grass(col, row))
-                    self.all_sprites.add(Grass(col, row))
+        # initialize all variables and do all the setup for a new game
+        self.all_sprites = pg.sprite.Group()
+        self.walls = pg.sprite.Group()
+        self.grasses = pg.sprite.Group()
+        for row, tiles in enumerate(self.map.data):
+            for col, tile in enumerate(tiles):
+                if tile == '0':
+                    Wall(self, col, row)
+                if tile == '1':
+                    Grass(self, col, row)
+                if tile == '4':
+                    Grass(self, col, row)
         self.player = Player(self, 1, 0)
-        self.all_sprites.add(self.player)
         self.camera = Camera(self.map.width, self.map.height)
 
-    def draw(self):
-        self.screen.fill((20, 20, 20))
-        for sprite in self.all_sprites:
-            self.screen.blit(sprite.image, self.camera.apply(sprite))
-        pygame.display.flip()
+    def run(self):
+        # game loop - set self.playing = False to end the game
+        self.playing = True
+        while self.playing:
+            self.dt = self.clock.tick(FPS) / 1000
+            self.events()
+            self.update()
+            self.draw()
+
+    def quit(self):
+        pg.quit()
+        sys.exit()
 
     def update(self):
         # update portion of the game loop
         self.all_sprites.update()
         self.camera.update(self.player)
 
-    def run(self):
-        self.running = True
-        while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-            self.update()
-            self.draw()
+    # def draw_grid(self):
+    #     for x in range(0, SURFACE_WIDTH, BLOCK_SIZE):
+    #         pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, SURFACE_HEIGHT))
+    #     for y in range(0, SURFACE_HEIGHT, BLOCK_SIZE):
+    #         pg.draw.line(self.screen, LIGHTGREY, (0, y), (SURFACE_WIDTH, y))
+
+    def draw(self):
+        self.screen.fill(BGCOLOR)
+        # self.draw_grid()
+        for sprite in self.all_sprites:
+            self.screen.blit(sprite.image, self.camera.apply(sprite))
+        pg.display.flip()
+
+    def events(self):
+        # catch all events here
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                self.quit()
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    self.quit()
+
+    def show_start_screen(self):
+        pass
+
+    def show_go_screen(self):
+        pass
+
+# create the game object
