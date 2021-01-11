@@ -149,5 +149,10 @@ class Maze:
         file = open("map.txt", "w")
         for row in range(len(self.matrix)):
             for col in range(len(self.matrix)):
-                file.write(str(self.matrix[row][col]) + " ")
+                if(col == len(self.matrix) - 1):
+                    file.write(str(self.matrix[row][col]))
+                else:
+                    file.write(str(self.matrix[row][col]) + " ")
+                # print("Here")
+                
             file.write("\n")
