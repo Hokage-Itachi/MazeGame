@@ -54,4 +54,4 @@ class Graph:
         for node in self.nodes:
             if(node.x == position[0] and node.y == position[1]):
                 return node
-        return None
+        return Node("", position[0], position[1])

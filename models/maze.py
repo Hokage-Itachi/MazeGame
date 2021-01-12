@@ -46,7 +46,7 @@ class Maze:
         self.matrix[self.size - 2][self.size - 1] = 4
         n = Node(str(self.index), self.size - 1, self.size - 2)
         self.index += 1
-        m = Node(str(self.index), self.size - 2, self.size - 2)
+        m = self.graph.get_node_from_position([self.size - 2, self.size - 2])
         self.graph.addNode(n)
         self.graph.addEdge(n, m)
         self.print_to_file()
@@ -69,8 +69,9 @@ class Maze:
     def createPath(self, pos, direction):
         i, j = pos[0], pos[1]
         if (direction == 0):  # go up
-            current_node = Node(str(self.index), j, i - 2)
+            current_node = self.graph.get_node_from_position([j, (i - 2)])
             if (self.matrix[i - 2][j] == 0):  # if not visit
+                current_node.label = str(self.index)
                 self.matrix[i-1][j] = 1
                 self.count -= 1
                 self.matrix[i-2][j] = 1
@@ -80,9 +81,9 @@ class Maze:
             self.old_node = current_node
             self.pos[0] = i - 2
         elif (direction == 1):  # go right
-            current_node = Node(str(self.index), j + 2, i)
-            
+            current_node = self.graph.get_node_from_position([j + 2, (i)])
             if (self.matrix[i][j + 2] == 0):  # if not visit
+                current_node.label = str(self.index)
                 self.matrix[i][j + 1] = 1
                 self.count -= 1
                 self.matrix[i][j + 2] = 1
@@ -92,8 +93,9 @@ class Maze:
             self.old_node = current_node
             self.pos[1] = j + 2
         elif(direction == 2):  # go down
-            current_node = Node(str(self.index), j, i + 2)
+            current_node = self.graph.get_node_from_position([j, (i + 2)])
             if (self.matrix[i + 2][j] == 0):  # if not visit
+                current_node.label = str(self.index)
                 self.matrix[i + 1][j] = 1
                 self.count -= 1
                 self.matrix[i + 2][j] = 1
@@ -103,9 +105,9 @@ class Maze:
             self.old_node = current_node
             self.pos[0] = i + 2
         else:  # go left
-            current_node = Node(str(self.index), j - 2, i)
-            
+            current_node = self.graph.get_node_from_position([j - 2, (i)])
             if (self.matrix[i][j - 2] == 0):  # if not visit
+                current_node.label = str(self.index)
                 self.matrix[i][j - 1] = 1
                 self.count -= 1
                 self.matrix[i][j - 2] = 1
@@ -177,7 +179,7 @@ class Maze:
                     continue
                 
                 # Calculate heuristics (Eculid distance)
-                next_node.g = self.getEculidDistance(curr_node, next_node)
+                next_node.g = self.getEculidDistance(curr_node, next_node) + sum_g
                 next_node.h = self.getEculidDistance(next_node, end_node)
                 next_node.f = next_node.g + next_node.h
                 
@@ -185,20 +187,34 @@ class Maze:
                 if(self.can_add_to_open(open_list, next_node)):
                     # Add neighbor to open
                     open_list.append(next_node)
+                    next_node.parent = curr_node
         return None
     
     def add_path_to_matrix(self, path):
-        for node in path:
+        old_node = path[0]
+        self.matrix[old_node.y][old_node.x] = 3
+        
+        for i in range(1, len(path) - 1):
+            node = path[i]
             self.matrix[node.y][node.x] = 3
+            if(node.x == old_node.x):
+                row = min(node.y, old_node.y)
+                col = node.x
+                self.matrix[row + 1][col] = 3
+            else:
+                col = min(node.x, old_node.x)
+                row = node.y
+                self.matrix[row][col + 1] = 3
+            old_node = node
  
     def getEculidDistance(self, start, end):
         return sqrt((start.x - end.x) ** 2 + (start.y - end.y) ** 2)
     
     def can_add_to_open(self, open_list, node):
-        print("List Length: " + str(len(open_list)))
+        # print("List Length: " + str(len(open_list)))
         for element in open_list:
-            print("Node: "+ node.__repr__())
-            print("Elem:" + element.__repr__())
+            # print("Node: "+ node.__repr__())
+            # print("Elem:" + element.__repr__())
             if(node == element and node.f > element.f):
                 return False
         return True

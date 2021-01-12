@@ -74,7 +74,7 @@ class Game:
                 if event.key == pg.K_ESCAPE:
                     self.show_start_screen()
                 if event.key == pg.K_h:
-                    self.maze.add_path_to_matrix(self.maze.findPath([1  , 1], [self.maze.size - 1, self.maze.size - 2]))
+                    self.maze.add_path_to_matrix(self.maze.findPath([1  , 0], [self.maze.size - 1, self.maze.size - 2]))
                     self.maze.printMatrix()
     def show_start_screen(self):
         # print(pg.font.get_fonts())
