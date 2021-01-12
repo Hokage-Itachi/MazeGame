@@ -5,8 +5,23 @@ class Player(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
+        self.imgs = []
+        self.imgs.append(pg.image.load("./image/char_1.png").convert_alpha())
+        self.imgs.append(pg.image.load("./image/walk_1.png").convert_alpha())
+        self.imgs.append(pg.image.load("./image/walk_2.png").convert_alpha())
+        self.imgs.append(pg.image.load("./image/walk_3.png").convert_alpha())
+        self.imgs.append(pg.image.load("./image/walk_4.png").convert_alpha())
+        self.imgs.append(pg.image.load("./image/walk_5.png").convert_alpha())
+        self.imgs.append(pg.image.load("./image/walk_6.png").convert_alpha())
+        self.imgs.append(pg.image.load("./image/walk_7.png").convert_alpha())
+        self.imgs.append(pg.image.load("./image/walk_8.png").convert_alpha())
+        self.imgs.append(pg.image.load("./image/walk_9.png").convert_alpha())
+        self.imgs.append(pg.image.load("./image/walk_10.png").convert_alpha())
+        
+
+        self.current_img = 0;
         self.game = game
-        self.image = game.player_img
+        self.image = self.imgs[self.current_img]
         # self.image.blit(YELLOW)
         self.rect = self.image.get_rect()
         self.vx, self.vy = 0, 0
@@ -24,9 +39,9 @@ class Player(pg.sprite.Sprite):
             self.vy = -CHARACTERS_SPEED
         if keys[pg.K_DOWN] or keys[pg.K_s]:
             self.vy = CHARACTERS_SPEED
-        if self.vx != 0 and self.vy != 0:
-            self.vx *= 0.7071
-            self.vy *= 0.7071
+        # if self.vx != 0 and self.vy != 0:
+        #     self.vx *= 0.7071
+        #     self.vy *= 0.7071
 
     def collide_with_walls(self, dir):
         if dir == 'x':
