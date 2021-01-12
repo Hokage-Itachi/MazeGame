@@ -24,7 +24,6 @@ class Game:
     def new(self):
         self.maze = Maze(self.maze_size)
         self.maze.create()
-        self.maze.print_to_file()
         self.load_data()
         # initialize all variables and do all the setup for a new game
         self.all_sprites = pg.sprite.Group()
@@ -38,6 +37,7 @@ class Game:
                     Grass(self, col, row)
                 if tile == '4':
                     Grass(self, col, row)
+                    # print(col, row)
         self.player = Player(self, 1, 0)
         self.camera = Camera(self.map.width, self.map.height)
 
@@ -73,7 +73,9 @@ class Game:
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.show_start_screen()
-
+                if event.key == pg.K_h:
+                    self.maze.add_path_to_matrix(self.maze.findPath([1  , 1], [self.maze.size - 1, self.maze.size - 2]))
+                    self.maze.printMatrix()
     def show_start_screen(self):
         # print(pg.font.get_fonts())
         menu = pygame_menu.Menu(300, 500, 'Welcome to Maze Runner',

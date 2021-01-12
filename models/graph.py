@@ -1,30 +1,27 @@
 class Node:
-    label = ""
-    adjNodes = []
-    x = y = f = g = h = 0
-    parent = None
 
     def __init__(self, label, x, y):
         self.label = label
         self.x = x
         self.y = y
+        self.g = 0 # Distance to start node
+        self.h = 0 # Distace to goal node
+        self.f = 0 # Total cost
+        self.adjNodes = []
+        self.parent = None
 
-    def compareTo(self, node):
-        if(self.f < node.f):
-            return -1
-        elif self.f > node.f:
-            return 1
-        else:
-            return 0
+    def __lt__(self, other):
+        return self.f < other.f
 
-    def equals(self, node):
-        if (self.x == node.x and self.y == node.y):
+    def __eq__(self, other):
+        # print(other.__repr__())
+        if (self.x == other.x and self.y == other.y):
             return True
         return False
 
-    def hello():
-        print("AM")
-
+     # Print node
+    def __repr__(self):
+        return ('({0}: x = {1}, y = {2})'.format(self.label, self.x, self.y))
 
 class Graph:
     nodes = []
@@ -47,3 +44,14 @@ class Graph:
                 if node in x.adjNodes:
                     x.adjNodes.remove(node)
                     self.numEdge -= 1
+
+    def remove_edge(self, u, v):
+        if (v in u.adjNodes) and (u in v.adjNodes):
+            v.adjNodes.remove(u)
+            u.adjNodes.remove(v)
+            self.numEdge -= 1
+    def get_node_from_position(self, position):
+        for node in self.nodes:
+            if(node.x == position[0] and node.y == position[1]):
+                return node
+        return None
