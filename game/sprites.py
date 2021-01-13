@@ -20,14 +20,15 @@ class Player(pg.sprite.Sprite):
     def get_keys(self):
         self.vx, self.vy = 0, 0
         keys = pg.key.get_pressed()
-        if keys[pg.K_LEFT] or keys[pg.K_a]:
-            self.vx = -CHARACTERS_SPEED
-        if keys[pg.K_RIGHT] or keys[pg.K_d]:
-            self.vx = CHARACTERS_SPEED
-        if keys[pg.K_UP] or keys[pg.K_w]:
-            self.vy = -CHARACTERS_SPEED
-        if keys[pg.K_DOWN] or keys[pg.K_s]:
-            self.vy = CHARACTERS_SPEED
+        if(not self.game.is_over):
+            if keys[pg.K_LEFT] or keys[pg.K_a]:
+                self.vx = -CHARACTERS_SPEED
+            if keys[pg.K_RIGHT] or keys[pg.K_d]:
+                self.vx = CHARACTERS_SPEED
+            if keys[pg.K_UP] or keys[pg.K_w]:
+                self.vy = -CHARACTERS_SPEED
+            if keys[pg.K_DOWN] or keys[pg.K_s]:
+                self.vy = CHARACTERS_SPEED
         # if self.vx != 0 and self.vy != 0:
         #     self.vx *= 0.7071
         #     self.vy *= 0.7071
@@ -60,6 +61,9 @@ class Player(pg.sprite.Sprite):
             self.image = (pg.image.load("./image/right_char.png").convert_alpha())
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
+        if(self.y < 0):
+            self.y = 0
+        
         self.rect.x = self.x
         self.collide_with_walls('x')
         self.rect.y = self.y
@@ -109,3 +113,28 @@ class Footprint(pg.sprite.Sprite):
         self.y = y
         self.rect.x = x * BLOCK_SIZE
         self.rect.y = y * BLOCK_SIZE
+class End(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.image.load("./image/end.png").convert_alpha()
+        # self.image.blit(YELLOW)
+        self.rect = self.image.get_rect()
+        self.x = x * BLOCK_SIZE
+        self.y = y * BLOCK_SIZE
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+class Start(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.image.load("./image/start.jpg").convert_alpha()
+        # self.image.blit(YELLOW)
+        self.rect = self.image.get_rect()
+        self.x = x * BLOCK_SIZE
+        self.y = y * BLOCK_SIZE
+        self.rect.x = self.x
+        self.rect.y = self.y

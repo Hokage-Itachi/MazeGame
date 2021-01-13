@@ -1,0 +1,11 @@
+1. Cài đặt các module cần thiết.
+	- Cài đặt pygame module: 
+		+ Mở "Command Prompt"
+		+ Gõ lệnh : pip install pygame
+	- Cài đặt pygame-menu:
+		+ Mở "Command Prompt"
+		+ Gõ lệnh : pip install pygame-menu
+2. Cài đặt chương trình:
+	- Giải nén file: MazeGame.zip
+	- Sử dụng các IDE: Visual Studio Code , PyCharm để mở project.
+	- Chạy file main.py

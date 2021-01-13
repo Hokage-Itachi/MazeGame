@@ -45,7 +45,7 @@ class Maze:
         m = self.graph.get_node_from_position([self.size - 2, self.size - 2])
         self.graph.addNode(n)
         self.graph.addEdge(n, m)
-        self.print_to_file()
+        self.print_to_file("map.txt")
 
     def getDirection(self, pos):
         directions = []
@@ -120,8 +120,8 @@ class Maze:
                 print(self.matrix[i][j], end=" ")
             print()
 
-    def print_to_file(self):
-        file = open("map.txt", "w")
+    def print_to_file(self, filename):
+        file = open(filename, "w")
         for row in range(len(self.matrix)):
             for col in range(len(self.matrix)):
                 if(col == len(self.matrix) - 1):
@@ -153,7 +153,7 @@ class Maze:
             curr_node = open_list.pop(0)
             
             # Calculate sum of g from start to current node
-            sum_g += curr_node.g
+            # sum_g += curr_node.g
             # Add current node to closed list
             close_list.append(curr_node)
             
@@ -175,7 +175,8 @@ class Maze:
                     continue
                 
                 # Calculate heuristics (Eculid distance)
-                next_node.g = self.getEculidDistance(curr_node, next_node) + sum_g
+                # next_node.g = self.getEculidDistance(curr_node, next_node) + sum_g
+                next_node.g = abs(curr_node.x - next_node.x) + abs(curr_node.y + next_node.y)
                 next_node.h = self.getEculidDistance(next_node, end_node)
                 next_node.f = next_node.g + next_node.h
                 
@@ -201,7 +202,9 @@ class Maze:
             else:
                 self.matrix[old_node.y][old_node.x] = "d"
         for i in range(1, len(path) - 1):
+            
             node = path[i]
+            # print(node.__repr__())
             if(node.x == old_node.x):
                 col = node.x
                 
@@ -237,7 +240,7 @@ class Maze:
         for element in open_list:
             # print("Node: "+ node.__repr__())
             # print("Elem:" + element.__repr__())
-            if(node == element and node.f > element.f):
+            if(node == element and node.f >= element.f):
                 return False
         return True
 

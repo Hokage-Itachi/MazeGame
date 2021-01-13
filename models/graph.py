@@ -24,9 +24,12 @@ class Node:
         return ('({0}: x = {1}, y = {2})'.format(self.label, self.x, self.y))
 
 class Graph:
-    nodes = []
-    numEdge = 0
+    
 
+
+    def __init__(self):
+        self.nodes = []
+        self.numEdge = 0
     def addNode(self, node):
         if node not in self.nodes:
             self.nodes.append(node)
