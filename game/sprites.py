@@ -6,18 +6,7 @@ class Player(pg.sprite.Sprite):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.imgs = []
-        self.imgs.append(pg.image.load("./image/char_1.png").convert_alpha())
-        self.imgs.append(pg.image.load("./image/walk_1.png").convert_alpha())
-        self.imgs.append(pg.image.load("./image/walk_2.png").convert_alpha())
-        self.imgs.append(pg.image.load("./image/walk_3.png").convert_alpha())
-        self.imgs.append(pg.image.load("./image/walk_4.png").convert_alpha())
-        self.imgs.append(pg.image.load("./image/walk_5.png").convert_alpha())
-        self.imgs.append(pg.image.load("./image/walk_6.png").convert_alpha())
-        self.imgs.append(pg.image.load("./image/walk_7.png").convert_alpha())
-        self.imgs.append(pg.image.load("./image/walk_8.png").convert_alpha())
-        self.imgs.append(pg.image.load("./image/walk_9.png").convert_alpha())
-        self.imgs.append(pg.image.load("./image/walk_10.png").convert_alpha())
-        
+        self.imgs.append(pg.image.load("./image/right_char.png").convert_alpha())
 
         self.current_img = 0;
         self.game = game
@@ -65,6 +54,10 @@ class Player(pg.sprite.Sprite):
 
     def update(self):
         self.get_keys()
+        if(self.vx < 0):
+            self.image = (pg.image.load("./image/left_char.png").convert_alpha())
+        if (self.vx > 0):
+            self.image = (pg.image.load("./image/right_char.png").convert_alpha())
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
         self.rect.x = self.x
@@ -91,6 +84,25 @@ class Grass(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.image.load("./image/grass.jpg")
+        # self.image.fill(GREEN)
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = x * BLOCK_SIZE
+        self.rect.y = y * BLOCK_SIZE
+class Footprint(pg.sprite.Sprite):
+    def __init__(self, game, x, y, direction):
+        self.groups = game.all_sprites, game.footprints
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        if(direction == "w"):
+            self.image = pg.image.load("./image/footprint_up.png")
+        elif (direction == "s"):
+            self.image = pg.image.load("./image/footprint_down.png")
+        elif (direction == "a"):
+            self.image = pg.image.load("./image/footprint_left.png")
+        else:
+            self.image = pg.image.load("./image/footprint_right.png")
         # self.image.fill(GREEN)
         self.rect = self.image.get_rect()
         self.x = x

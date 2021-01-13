@@ -4,13 +4,6 @@ from math import *
 
 
 class Maze:
-    matrix = [[]]
-    size = count = index = 0
-    pos = [1, 1]
-    index = 0
-    graph = Graph()
-    # node = Node()
-    # end = Node()
 
     def __init__(self, size):
         if(size % 2 == 0):
@@ -19,6 +12,9 @@ class Maze:
             self.size = size
         self.count = (self.size - 1) ** 2 / 4
         self.matrix = [[0 for i in range(self.size)] for j in range(self.size)]
+        self.pos = [1, 1]
+        self.index = 0
+        self.graph = Graph()
         # print(self.matrix)
 
     def create(self):
@@ -192,19 +188,45 @@ class Maze:
     
     def add_path_to_matrix(self, path):
         old_node = path[0]
-        self.matrix[old_node.y][old_node.x] = 3
         
+        next_node = path[1]
+        if(next_node.x == old_node.x):
+            if(next_node.y < old_node.y):
+                self.matrix[old_node.y][old_node.x] = "w"
+            else:
+                self.matrix[old_node.y][old_node.x] = "s"
+        else:
+            if(next_node.x < old_node.x):
+                self.matrix[old_node.y][old_node.x] = "a"
+            else:
+                self.matrix[old_node.y][old_node.x] = "d"
         for i in range(1, len(path) - 1):
             node = path[i]
-            self.matrix[node.y][node.x] = 3
             if(node.x == old_node.x):
-                row = min(node.y, old_node.y)
                 col = node.x
-                self.matrix[row + 1][col] = 3
+                
+                if (node.y < old_node.y): # move up
+                    row = node.y + 1
+                    self.matrix[row][col] = "w"
+                    self.matrix[node.y][node.x] = "w"
+                    
+                else: # move down
+                    row = node.y - 1
+                    self.matrix[row][col] = "s"
+                    self.matrix[node.y][node.x] = "s"
+                    
             else:
-                col = min(node.x, old_node.x)
                 row = node.y
-                self.matrix[row][col + 1] = 3
+                if(node.x < old_node.x):  # move left
+                    col = node.x + 1 
+                    self.matrix[row][col] = "a"
+                    self.matrix[node.y][node.x] = "a"
+
+                else: # move right
+                    col = node.x - 1 
+                    self.matrix[row][col] = "d"
+                    self.matrix[node.y][node.x] = "d"
+
             old_node = node
  
     def getEculidDistance(self, start, end):

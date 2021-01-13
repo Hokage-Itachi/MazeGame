@@ -29,15 +29,16 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         self.grasses = pg.sprite.Group()
-        for row, tiles in enumerate(self.map.data):
-            for col, tile in enumerate(tiles):
-                if tile == '0':
+        self.footprints = pg.sprite.Group()
+        matrix = self.maze.matrix
+        for row in range(len(matrix)):
+            for col in range(len(matrix)):
+                if(matrix[row][col] == 0):
                     Wall(self, col, row)
-                if tile == '1':
+                else:
                     Grass(self, col, row)
-                if tile == '4':
-                    Grass(self, col, row)
-                    # print(col, row)
+        
+        self.hint = False
         self.player = Player(self, 1, 0)
         self.camera = Camera(self.map.width, self.map.height)
 
@@ -58,10 +59,33 @@ class Game:
         # update portion of the game loop
         self.all_sprites.update()
         self.camera.update(self.player)
+    # TODO: movement not smooth
     def draw(self):
         # self.draw_grid()
-        for sprite in self.all_sprites:
-            self.screen.blit(sprite.image, self.camera.apply(sprite))
+        matrix = self.maze.matrix
+        for row in range(len(matrix)):
+            for col in range(len(matrix)):
+                if(matrix[row][col] == "w"):
+                    Footprint(self, col, row, "w")
+                if(matrix[row][col] == "s"):
+                    Footprint(self, col, row, "s")
+                if(matrix[row][col] == "a"):
+                    Footprint(self, col, row, "a")
+                if(matrix[row][col] == "d"):
+                    Footprint(self, col, row, "d")
+        
+            # self.player = Player(self, self.player.x // 70, self.player.y // 70)
+        for wall in self.walls:
+            self.screen.blit(wall.image, self.camera.apply(wall))
+        for grass in self.grasses:
+            self.screen.blit(grass.image, self.camera.apply(grass))
+        if(self.hint == True):
+            for footprint in self.footprints:
+                self.screen.blit(footprint.image, self.camera.apply(footprint))
+        self.screen.blit(self.player.image, self.camera.apply(self.player))
+        
+        # for sprite in self.all_sprites:
+        #     self.screen.blit(sprite.image, self.camera.apply(sprite))
         pg.display.flip()
 
     def events(self):
@@ -74,8 +98,7 @@ class Game:
                 if event.key == pg.K_ESCAPE:
                     self.show_start_screen()
                 if event.key == pg.K_h:
-                    self.maze.add_path_to_matrix(self.maze.findPath([1  , 0], [self.maze.size - 1, self.maze.size - 2]))
-                    self.maze.printMatrix()
+                    self.show_hint()
     def show_start_screen(self):
         # print(pg.font.get_fonts())
         menu = pygame_menu.Menu(300, 500, 'Welcome to Maze Runner',
@@ -96,7 +119,6 @@ class Game:
         textRect = text.get_rect()
         textRect.center = (100, 10)
         while True:
-            
             self.screen.blit(text, textRect)
             pg.display.update()
             self.events()
@@ -111,11 +133,12 @@ class Game:
         else:
             self.maze_size = 20
         print("Maze Size:", self.maze_size)
-        
-
-    def start_the_game(self):
-    # Do the job here !
-        
+    
+    def show_hint(self):
+        current_pos = [self.player.x // BLOCK_SIZE, self.player.y // BLOCK_SIZE]
+        self.maze.add_path_to_matrix(self.maze.findPath(current_pos, [self.maze.size - 1, self.maze.size - 2]))
+        self.hint = True
+    def start_the_game(self):    
         self.screen = pg.display.set_mode((SURFACE_WIDTH, SURFACE_HEIGHT))
         while True:
             self.new()
