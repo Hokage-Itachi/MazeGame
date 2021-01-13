@@ -59,20 +59,10 @@ class Game:
         # update portion of the game loop
         self.all_sprites.update()
         self.camera.update(self.player)
-    # TODO: movement not smooth
+
     def draw(self):
         # self.draw_grid()
-        matrix = self.maze.matrix
-        for row in range(len(matrix)):
-            for col in range(len(matrix)):
-                if(matrix[row][col] == "w"):
-                    Footprint(self, col, row, "w")
-                if(matrix[row][col] == "s"):
-                    Footprint(self, col, row, "s")
-                if(matrix[row][col] == "a"):
-                    Footprint(self, col, row, "a")
-                if(matrix[row][col] == "d"):
-                    Footprint(self, col, row, "d")
+        
         
             # self.player = Player(self, self.player.x // 70, self.player.y // 70)
         for wall in self.walls:
@@ -99,6 +89,7 @@ class Game:
                     self.show_start_screen()
                 if event.key == pg.K_h:
                     self.show_hint()
+    
     def show_start_screen(self):
         # print(pg.font.get_fonts())
         menu = pygame_menu.Menu(300, 500, 'Welcome to Maze Runner',
@@ -124,7 +115,7 @@ class Game:
             self.events()
 
     def set_difficulty(self, value, difficulty):
-    # Do the job here !
+   
         print("Difficulty:", difficulty)
         if(difficulty == 1):
             self.maze_size = 10
@@ -138,6 +129,17 @@ class Game:
         current_pos = [self.player.x // BLOCK_SIZE, self.player.y // BLOCK_SIZE]
         self.maze.add_path_to_matrix(self.maze.findPath(current_pos, [self.maze.size - 1, self.maze.size - 2]))
         self.hint = True
+        matrix = self.maze.matrix
+        for row in range(len(matrix)):
+            for col in range(len(matrix)):
+                if(matrix[row][col] == "w"):
+                    Footprint(self, col, row, "w")
+                if(matrix[row][col] == "s"):
+                    Footprint(self, col, row, "s")
+                if(matrix[row][col] == "a"):
+                    Footprint(self, col, row, "a")
+                if(matrix[row][col] == "d"):
+                    Footprint(self, col, row, "d")
     def start_the_game(self):    
         self.screen = pg.display.set_mode((SURFACE_WIDTH, SURFACE_HEIGHT))
         while True:
