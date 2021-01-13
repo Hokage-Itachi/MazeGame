@@ -14,8 +14,8 @@ class Game:
         self.screen = pg.display.set_mode((SURFACE_WIDTH, SURFACE_HEIGHT))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
-        self.maze_size = 10
-        self.time = 30
+        self.maze_size = 15
+        # self.time = 30
         pg.time.set_timer(pg.USEREVENT, 1000)
         
     def load_data(self):
@@ -86,7 +86,7 @@ class Game:
         
         self.screen.blit(self.player.image, self.camera.apply(self.player))
         # Draw time
-        self.screen.blit(pg.font.Font(None, 36).render(str(self.time), True, WHITE), (self.camera.width / 2 - 36, 10))
+        self.screen.blit(pg.font.Font(None, 36).render(str(self.time), True, WHITE), (SURFACE_WIDTH - 36, 10))
         
         
         if(self.is_over):
@@ -163,7 +163,7 @@ class Game:
    
         print("Difficulty:", difficulty)
         if(difficulty == 1):
-            self.maze_size = 10
+            self.maze_size = 15
         elif(difficulty == 3):
             self.maze_size = 30
         else:
@@ -190,7 +190,7 @@ class Game:
     
     def start_the_game(self):    
         self.screen = pg.display.set_mode((SURFACE_WIDTH, SURFACE_HEIGHT))
-        while True:
-            self.new()
-            self.run()
+        
+        self.new()
+        self.run()
 # create the game object
