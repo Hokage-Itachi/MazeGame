@@ -112,8 +112,7 @@ class Maze:
             # if visited
             self.old_node = current_node
             self.pos[1] = j - 2
-
-    
+   
     def printMatrix(self):
         for i in range(self.size):
             for j in range(self.size):
@@ -132,9 +131,10 @@ class Maze:
                 
             file.write("\n")
             # TODO: set parent to node
+   # TODO: may be start not in graph that throw error...
     def findPath(self, start, end):
         # Create lists for open nodes and closed nodes
-        start_node = self.graph.get_node_from_position(start)
+        start_node = self.graph.get_nearest_node_by_position(start)
         end_node = self.graph.get_node_from_position(end)
         # print(start_node.__repr__())
         # print(end_node.__repr__())
@@ -176,7 +176,7 @@ class Maze:
                 
                 # Calculate heuristics (Eculid distance)
                 # next_node.g = self.getEculidDistance(curr_node, next_node) + sum_g
-                next_node.g = abs(curr_node.x - next_node.x) + abs(curr_node.y + next_node.y)
+                next_node.g = abs(curr_node.x - next_node.x) + abs(curr_node.y + next_node.y) + curr_node.g
                 next_node.h = self.getEculidDistance(next_node, end_node)
                 next_node.f = next_node.g + next_node.h
                 

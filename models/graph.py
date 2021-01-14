@@ -58,3 +58,17 @@ class Graph:
             if(node.x == position[0] and node.y == position[1]):
                 return node
         return Node("", position[0], position[1])
+
+    def get_nearest_node_by_position(self, position):
+        x = int(position[0])
+        y = int(position[1])
+        
+        if(x % 2 == 0):
+            x += 1
+        if(y % 2 == 0):
+            y += 1
+        
+        for node in self.nodes:
+            if(node.x == x and node.y == y):
+                return node
+        
