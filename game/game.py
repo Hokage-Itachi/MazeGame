@@ -15,6 +15,7 @@ class Game:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.maze_size = 15
+        
         # self.time = 30
         pg.time.set_timer(pg.USEREVENT, 1000)
         
@@ -26,8 +27,9 @@ class Game:
         self.maze = Maze(self.maze_size)
         self.maze.create()
         self.load_data()
-        self.time = self.maze_size * 3
-        self.is_over = False        
+        self.time = self.maze_size * 2
+        self.is_winner = False
+        self.is_loser = False    
         # initialize all variables and do all the setup for a new game
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
@@ -63,7 +65,9 @@ class Game:
         self.all_sprites.update()
         self.camera.update(self.player)
         if(self.player.x  >= self.camera.width - BLOCK_SIZE):
-            self.is_over = True
+            self.is_winner = True
+        if(self.time <= 0):
+            self.is_loser = True
 
     def draw(self):
         # self.draw_grid()
@@ -89,9 +93,22 @@ class Game:
         self.screen.blit(pg.font.Font(None, 36).render(str(self.time), True, WHITE), (SURFACE_WIDTH - 36, 10))
         
         
-        if(self.is_over):
+        if(self.is_winner):
             font = pg.font.Font(None, 36)
             text_1 = font.render("Amazing, Good Job....", True, WHITE)
+            text_1_rect = text_1.get_rect()
+            text_1_x = self.screen.get_width() / 2 - text_1_rect.width / 2
+            text_1_y = self.screen.get_height() / 2 - text_1_rect.height / 2
+            self.screen.blit(text_1, [text_1_x, text_1_y])
+            
+            text_2 = font.render("Press \"Esc\"", True, WHITE)
+            text_2_rect = text_2.get_rect()
+            text_2_x = self.screen.get_width() / 2 - text_2_rect.width / 2 
+            text_2_y = self.screen.get_height() / 2 - text_2_rect.height / 2 + 30
+            self.screen.blit(text_2, [text_2_x, text_2_y])
+        if(self.is_loser):
+            font = pg.font.Font(None, 36)
+            text_1 = font.render("Oh no, Oh no, Oh no no no no....", True, WHITE)
             text_1_rect = text_1.get_rect()
             text_1_x = self.screen.get_width() / 2 - text_1_rect.width / 2
             text_1_y = self.screen.get_height() / 2 - text_1_rect.height / 2
@@ -110,7 +127,8 @@ class Game:
             if event.type == pg.QUIT:
                 self.quit()
             if event.type == pg.USEREVENT:
-                self.time -= 1
+                if(not self.is_winner and not self.is_loser):
+                    self.time -= 1
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.show_start_screen()
@@ -165,9 +183,9 @@ class Game:
         if(difficulty == 1):
             self.maze_size = 15
         elif(difficulty == 3):
-            self.maze_size = 30
+            self.maze_size = 40
         else:
-            self.maze_size = 20
+            self.maze_size = 25
         print("Maze Size:", self.maze_size)
     
     def show_hint(self):

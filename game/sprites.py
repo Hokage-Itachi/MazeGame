@@ -20,7 +20,7 @@ class Player(pg.sprite.Sprite):
     def get_keys(self):
         self.vx, self.vy = 0, 0
         keys = pg.key.get_pressed()
-        if(not self.game.is_over):
+        if(not self.game.is_winner and not self.game.is_loser):
             if keys[pg.K_LEFT] or keys[pg.K_a]:
                 self.vx = -CHARACTERS_SPEED
             if keys[pg.K_RIGHT] or keys[pg.K_d]:
