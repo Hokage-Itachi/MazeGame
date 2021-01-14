@@ -15,6 +15,10 @@ class Game:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.maze_size = 15
+        self.is_winner = False
+        self.is_loser = False
+        self.time = 0
+        
         
         # self.time = 30
         pg.time.set_timer(pg.USEREVENT, 1000)
@@ -27,9 +31,12 @@ class Game:
         self.maze = Maze(self.maze_size)
         self.maze.create()
         self.load_data()
-        self.time = self.maze_size * 2
         self.is_winner = False
-        self.is_loser = False    
+        self.is_loser = False
+        # add sound effect
+        pg.mixer.music.stop()
+        pg.mixer.music.load("./sound/main_sound.mp3")
+        pg.mixer.music.play(-1)
         # initialize all variables and do all the setup for a new game
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
@@ -68,7 +75,7 @@ class Game:
             self.is_winner = True
         if(self.time <= 0):
             self.is_loser = True
-
+            
     def draw(self):
         # self.draw_grid()
         
@@ -137,6 +144,10 @@ class Game:
     
     def show_start_screen(self):
         # print(pg.font.get_fonts())
+        pg.mixer.music.stop()
+        pg.mixer.music.load("./sound/menu_sound.mp3")
+        pg.mixer.music.play(-1)
+        self.screen = pg.display.set_mode((SURFACE_WIDTH, SURFACE_HEIGHT))
         menu = pygame_menu.Menu(300, 550, 'Welcome to Maze Runner',
                        theme=pygame_menu.themes.THEME_GREEN)
 
@@ -146,46 +157,36 @@ class Game:
         menu.add_button('Help', self.show_help_screen)
         menu.add_button('Quit', pygame_menu.events.EXIT)
         menu.mainloop(self.screen)
+        
 
     def show_help_screen(self):
-        self.screen = pg.display.set_mode((500, 300))
+        bg = pg.image.load("./image/tutorial.png").convert_alpha()
+        self.screen = pg.display.set_mode((879,336))
         self.screen.fill(WHITE)
-        font = pg.font.SysFont("None", 20)
-        text = font.render('How to play?', True, BLACK, WHITE)
-        textRect = text.get_rect()
-        textRect.center = (40, 10)
-        
-        tutor_1 = "1. Use (A, W, S, D) or (left, right, up, down) arrow to move the character."
-        tutor_2 = "2. Click \"H\" to show the hint about the path."
-        tutor_3 = " 3. Click \"Esc\" to return to start menu."
-        tutor_1_text = pg.font.SysFont("None", 15).render(tutor_1, True, BLACK, WHITE)
-        tutor_1_text_rect = text.get_rect()
-        tutor_1_text_rect.center= (100, 30)
-        
-        tutor_2_text = pg.font.SysFont("None", 15).render(tutor_2, True, BLACK, WHITE)
-        tutor_2_text_rect = text.get_rect()
-        tutor_2_text_rect.center= (100, 40)
-        
-        tutor_3_text = pg.font.SysFont("None", 15).render(tutor_3, True, BLACK, WHITE)
-        tutor_3_text_rect = text.get_rect()
-        tutor_3_text_rect.center= (97, 50)
+        pg.mixer.music.stop()
         while True:
-            self.screen.blit(text, textRect)
-            self.screen.blit(tutor_1_text, tutor_1_text_rect)
-            self.screen.blit(tutor_2_text, tutor_2_text_rect)
-            self.screen.blit(tutor_3_text, tutor_3_text_rect)
+            self.screen.blit(bg, (0, 0))
             pg.display.update()
-            self.events()
+            # self.events()
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    self.quit()
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                     self.show_start_screen()
 
     def set_difficulty(self, value, difficulty):
    
         print("Difficulty:", difficulty)
         if(difficulty == 1):
             self.maze_size = 15
+            self.time = 30
         elif(difficulty == 3):
             self.maze_size = 40
+            self.time = 120
         else:
             self.maze_size = 25
+            self.time = 60
         print("Maze Size:", self.maze_size)
     
     def show_hint(self):
